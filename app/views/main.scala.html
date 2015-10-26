@@ -1,0 +1,165 @@
+@(title: String, nav: String = "")(content: Html)
+
+@import be.objectify.deadbolt.java.views.html._
+@import be.objectify.deadbolt.core.utils.TemplateUtils._
+
+<!DOCTYPE html>
+<html lang="@lang().code()">
+  <head>
+    <title>@title</title>
+
+    <!-- Le meta -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Play Authenticate - an authentication module for the Play! Framework 2.0">
+    <meta name="author" content="The Play Authenticate Team">
+
+    <!-- Le scripts -->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<script src="@routes.Application.jsRoutes" defer="defer"></script>
+	<script src="@routes.Assets.at("assets/plugins/jquery/jquery-1.9.1.min.js")"></script>
+	<script src="@routes.Assets.at("assets/plugins/jquery/jquery-migrate-1.1.0.min.js")"></script>
+	<script src="@routes.Assets.at("assets/plugins/jquery-ui/ui/minified/jquery-ui.min.js")"></script>
+	<script src="@routes.Assets.at("assets/plugins/bootstrap/js/bootstrap.min.js")"></script>
+	<script src="@routes.Assets.at("assets/plugins/slimscroll/jquery.slimscroll.min.js")"></script>
+	<script src="@routes.Assets.at("assets/plugins/jquery-cookie/jquery.cookie.js")"></script>
+
+	
+	<link href="@routes.Assets.at("assets/plugins/jquery-ui/themes/base/minified/jquery-ui.min.css")" rel="stylesheet">
+    <link href="@routes.Assets.at("assets/plugins/bootstrap/css/bootstrap.min.css")" rel="stylesheet">
+     <link href="@routes.Assets.at("assets/plugins/font-awesome/css/font-awesome.min.css")" rel="stylesheet">
+    <link href="@routes.Assets.at("assets/css/animate.min.css")" rel="stylesheet">
+     <link href="@routes.Assets.at("assets/css/style.min.css")" rel="stylesheet">
+    <link href="@routes.Assets.at("assets/css/style-responsive.min.css")" rel="stylesheet">
+    <link href="@routes.Assets.at("assets/css/theme/default.css")" rel="stylesheet">
+    <!-- Le styles -->
+   
+	
+	<!-- ================== BEGIN PAGE LEVEL CSS STYLE ================== -->
+    <link href="assets/plugins/jquery-jvectormap/jquery-jvectormap-1.2.2.css" rel="stylesheet" />
+    <link href="assets/plugins/bootstrap-calendar/css/bootstrap_calendar.css" rel="stylesheet" />
+    <link href="assets/plugins/gritter/css/jquery.gritter.css" rel="stylesheet" />
+    <link href="assets/plugins/morris/morris.css" rel="stylesheet" />
+	<!-- ================== END PAGE LEVEL CSS STYLE ================== -->
+	
+	<!-- ================== BEGIN BASE JS ================== -->
+	<script src="assets/plugins/pace/pace.min.js"></script>
+	<!-- ================== END BASE JS ================== -->
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+  </head>
+
+  <body>
+	
+	
+    <div id="page-container" class="page-sidebar-fixed page-header-fixed">
+		<!-- begin #header -->
+		<div id="header" class="header navbar navbar-inverse navbar-fixed-top">
+			<!-- begin container-fluid -->
+			<div class="container-fluid">
+				<!-- begin mobile sidebar expand / collapse button -->
+				<div class="navbar-header">
+					<a href="@routes.Application.index()" class="navbar-brand"><span class="navbar-logo"></span>Doctors Scheduler</a>
+					<button type="button" class="navbar-toggle" data-click="sidebar-toggled">
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+				</div>
+
+
+          <div class="btn-group pull-right">
+          @subjectPresentOr() {
+          	@defining(Application.getLocalUser(session())) { user =>
+            <ul class="nav navbar-nav navbar-right">
+            <li class="dropdown navbar-user">
+						<a href="@routes.Application.profile()" class="dropdown-toggle" data-toggle="dropdown">
+							<img src="assets/img/user-13.jpg" alt="" /> 
+							<span class="hidden-xs">@user.name</span> <b class="caret"></b>
+						</a>
+						<ul class="nav dropdown-menu animated fadeInLeft">
+							<li class="arrow"></li>
+							<li><a href="@routes.Application.profile()">Edit Profile</a></li>
+							<li><a href="javascript:;"><span class="badge badge-danger pull-right">2</span> Inbox</a></li>
+							<li><a href="javascript:;">Calendar</a></li>
+							<li><a href="javascript:;">Setting</a></li>
+							<li class="divider"></li>
+							<li><a href="@com.feth.play.module.pa.controllers.routes.Authenticate.logout()">Log Out</a></li>
+						</ul>
+					</li>
+               </ul>
+            }
+          }{
+          <ul class="nav navbar-right">
+          <li><a href="@routes.Application.login()" class="btn btn-primary m-r-5 m-b-5 @("disabled".when(nav == "login"))">@Messages("playauthenticate.navigation.login")</a></li>
+          </ul>
+            
+          }
+          </div>
+
+
+          <div class="navbar-header">
+            <ul class="nav navbar-nav">
+              <li class="@("active".when(nav == ""))"><a href="@routes.Application.index()">@Messages("playauthenticate.navigation.home")</a></li>
+              <li class="@("active".when(nav == "restricted"))"><a href="@routes.Application.restricted()">@Messages("playauthenticate.navigation.restricted")</a></li>
+
+                @subjectNotPresent() {
+			    	<li class="@("active".when(nav == "signup"))"><a href="@routes.Application.signup()">@Messages("playauthenticate.navigation.signup")</a></li>
+			    }
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+	    @if(flash.contains(Application.FLASH_ERROR_KEY)) {
+	      <div class="alert alert-error">
+	      	@flash().get(Application.FLASH_ERROR_KEY)
+	      </div>
+	    }
+	    @if(flash.contains(Application.FLASH_MESSAGE_KEY)) {
+	      <div class="alert alert-success">
+	      	@flash().get(Application.FLASH_MESSAGE_KEY)
+	      </div>
+	    }
+		@content
+
+    <hr>
+
+      <footer>
+        <p>&copy; 2015-2016 Doctor Scheduler! Licensed under Apache License, Version 2.0. View details <a href="">here</a>.</p>
+        <p>
+        <small>Developed by <a href="https://bd.linkedin.com/pub/shekhar-ullah/26/a88/3ba" target="_blank">Shekhar Ullah</a> </p>
+      </footer>
+    </div> <!-- /container -->
+
+	<!-- ================== BEGIN BASE JS ================== -->
+	<script src="assets/plugins/jquery/jquery-1.9.1.min.js"></script>
+	<script src="assets/plugins/jquery/jquery-migrate-1.1.0.min.js"></script>
+	<script src="assets/plugins/jquery-ui/ui/minified/jquery-ui.min.js"></script>
+	<script src="assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+	<!--[if lt IE 9]>
+		<script src="assets/crossbrowserjs/html5shiv.js"></script>
+		<script src="assets/crossbrowserjs/respond.min.js"></script>
+		<script src="assets/crossbrowserjs/excanvas.min.js"></script>
+	<![endif]-->
+	<script src="assets/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+	<script src="assets/plugins/jquery-cookie/jquery.cookie.js"></script>
+	<!-- ================== END BASE JS ================== -->
+	
+	<!-- ================== BEGIN PAGE LEVEL JS ================== -->
+    <script src="assets/plugins/morris/raphael.min.js"></script>
+    <script src="assets/plugins/morris/morris.js"></script>
+    <script src="assets/plugins/jquery-jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
+    <script src="assets/plugins/jquery-jvectormap/jquery-jvectormap-world-merc-en.js"></script>
+    <script src="assets/plugins/bootstrap-calendar/js/bootstrap_calendar.min.js"></script>
+	<script src="assets/plugins/gritter/js/jquery.gritter.js"></script>
+	<script src="assets/js/dashboard-v2.min.js"></script>
+	<script src="assets/js/apps.min.js"></script>
+	<!-- ================== END PAGE LEVEL JS ================== -->
+  </body>
+</html>
